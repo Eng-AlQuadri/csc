@@ -132,6 +132,7 @@
                             break;
                         case 'student':
                             window.location.href = "{{ route('student') }}";
+                            break;
                     }
 
 

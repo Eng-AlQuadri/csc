@@ -77,7 +77,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: "{{ route('subjects.store') }}",
+                url: "{{ route('admin.subjects.store') }}",
                 type: 'POST',
                 data: $(this).serialize(),
                 headers: {
@@ -115,7 +115,7 @@
             });
 
             $.ajax({
-                url: "{{ route('assign.subjects.students') }}",
+                url: "{{ route('admin.assign.subjects.students') }}",
                 type: 'get'
 
             }).then(function(res){
@@ -143,12 +143,14 @@
                                     <div>
                                         <label>Subject:</label>
                                         <select name='subject_id' id='subjectDropdown' required>
+                                            <option value="">Select a subject</option>
                                             ${subjectsOptions}
                                         </select>
                                     </div>
                                     <div>
                                         <label>Student:</label>
                                         <select name="student_id" id='studentDropdown' required>
+                                            <option value="">Select a student</option>
                                             ${studentsOptions}
                                         </select>
                                     </div>
@@ -172,7 +174,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: "{{ route('assign.subject') }}", // Adjust this route as needed
+                url: "{{ route('admin.assign.subject') }}", // Adjust this route as needed
                 type: 'POST',
                 data: $(this).serialize(),
                 headers: {

@@ -2,152 +2,81 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
-use App\Http\Middleware\EnsureUserIsAuthenticated;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('loginRegester');
-});
 
 
-Route::get('/login', function () {
-    $user = auth()->user(); // Get the authenticated user
+// Public Routes
+Route::get('/', fn() => view('loginRegester'));  // Login & Register Screen
 
-    // Check if the user is authenticated
-    if ($user) {
-        $type = $user->role; // Get the user's role
-    } else {
-        $type = 'nothing'; // Set a default value if no user is authenticated
-    }
-    return view('loginRegester', compact('type'));
-});
-
-Route::get('/admin', function () {
-    return view('AdminLayout');
-})->name('admin');
-
-Route::get('/student', function () {
-    return view('StudentLayout');
-})->name('student');
-
-Route::get('/load-view/{view}', function ($view) {
-    return view($view);
-})->name('load-view');
-
-// Student Controller
-
-Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-
-Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
-
-Route::post('/students', [StudentController::class, 'store'])->name('students.store');
-
-Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
-
-Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
-
-Route::put('/students/activate/{id}', [StudentController::class, 'activate'])->name('students.activate');
-
-// Subject Controller
-
-Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
-
-Route::get('/assign-subjects-students', [SubjectController::class, 'getStudentsAndSubjects'])->name('assign.subjects.students');
-
-Route::post('/assign-subjects', [SubjectController::class, 'assignSubject'])->name('assign.subject');
-
-Route::get('/studentsubjects/{studentId}', [SubjectController::class, 'getSubjectsByStudent'])->name('subjectByStudent');
-
-// Mark Controller
-
-Route::post('/marks', [MarkController::class, 'store'])->name('marks.store');
-
-Route::get('/marks/courses/{studentId}', [MarkController::class, 'getMarksWithCourses'])->name('MarksWithCourses');
-
-
-
-// Login, Signup And Logout
+Route::get('/login', fn() => view('loginRegester'))->name('login');  // Login & Register Screen
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::post('/signup', [AuthController::class, 'signup'])->name('signup');
 
-Route::post('/logout', function () {
-
-    Auth::logout();
-
-    return response()->json('', 204);
-})->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-///////////////////////////////////////////////////////////////////////////////
+// Admin Routes
+Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
 
-// // Public routes
-// Route::get('/', fn() => view('loginRegester'));
-// Route::get('/login', fn() => view('loginRegester'))->name('login');
-// Route::post('/login', [AuthController::class, 'login'])->name('login');
-// Route::post('/signup', [AuthController::class, 'signup'])->name('signup');
+    Route::get('/', fn() => view('AdminLayout'))->name('admin');
+
+    Route::get('/admin/load-view/{view}', fn($view) => view($view))->name('admin.load-view');
+
+    Route::get('/admin/students', [StudentController::class, 'index'])->name('admin.students.index');
+
+    Route::get('/admin/students/{id}', [StudentController::class, 'show'])->name('admin.students.show');
+
+    Route::post('/admin/students', [StudentController::class, 'store'])->name('admin.students.store');
+
+    Route::delete('/admin/students/{id}', [StudentController::class, 'destroy'])->name('admin.students.destroy');
+
+    Route::put('/admin/students/{id}', [StudentController::class, 'update'])->name('admin.students.update');
+
+    Route::put('/admin/students/activate/{id}', [StudentController::class, 'activate'])->name('admin.students.activate');
+
+    // Subject Controller
+
+    Route::post('/admin/subjects', [SubjectController::class, 'store'])->name('admin.subjects.store');
+
+    Route::get('/admin/assign-subjects-students', [SubjectController::class, 'getStudentsAndSubjects'])->name('admin.assign.subjects.students');
+
+    Route::post('/admin/assign-subjects', [SubjectController::class, 'assignSubject'])->name('admin.assign.subject');
+
+    Route::get('/admin/studentsubjects/{studentId}', [SubjectController::class, 'getSubjectsByStudent'])->name('admin.subjectByStudent');
+
+    // Mark Controller
+
+    Route::post('/admin/marks', [MarkController::class, 'store'])->name('admin.marks.store');
+
+    Route::get('/admin/marks/courses/{studentId}', [MarkController::class, 'admin.getMarksWithCourses'])->name('MarksWithCourses');
+
+    // Message Controller
+    Route::get('/admin/messages/{id}', [MessageController::class, 'index'])->name('admin.message.index');
+});
 
 
-// // Logout route
-// Route::post('/logout', function () {
-//     Auth::logout();
-//     return response()->json('', 204);
-// })->name('logout');
+// Student Routes
+Route::group(['prefix' => 'student', 'middleware' => 'student'], function () {
 
+    Route::get('/', fn() => view('StudentLayout'))->name('student');
 
-// // Protected routes for admin only
-// Route::middleware([EnsureUserIsAuthenticated::class . ':admin'])->group(function () {
+    Route::get('/student/load-view/{view}', fn($view) => view($view))->name('student.load-view');
 
-//     Route::get('/admin', fn() => view('AdminLayout'))->name('admin');
+    Route::get('/student', fn() => view('StudentLayout'))->name('student');
 
-//     Route::get('/load-view/{view}', function ($view) {
-//         return view($view);
-//     })->name('load-view');
+    Route::get('/studentsubjects/{studentId}', [SubjectController::class, 'getSubjectsByStudent'])->name('subjectByStudent');
 
-//     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
 
-//     Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
+    Route::get('/marks/courses/{studentId}', [MarkController::class, 'getMarksWithCourses'])->name('MarksWithCourses');
 
-//     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
 
-//     Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
-
-//     Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
-
-//     Route::put('/students/activate/{id}', [StudentController::class, 'activate'])->name('students.activate');
-
-//     // Subject Controller
-
-//     Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
-
-//     Route::get('/assign-subjects-students', [SubjectController::class, 'getStudentsAndSubjects'])->name('assign.subjects.students');
-
-//     Route::post('/assign-subjects', [SubjectController::class, 'assignSubject'])->name('assign.subject');
-
-//     Route::get('/studentsubjects/{studentId}', [SubjectController::class, 'getSubjectsByStudent'])->name('subjectByStudent');
-
-//     // Mark Controller
-
-//     Route::post('/marks', [MarkController::class, 'store'])->name('marks.store');
-
-//     Route::get('/marks/courses/{studentId}', [MarkController::class, 'getMarksWithCourses'])->name('MarksWithCourses');
-// });
-
-// // Protected routes for students
-// Route::middleware(['auth.role:student'])->group(function () {
-
-//     Route::get('/load-view/{view}', function ($view) {
-//         return view($view);
-//     })->name('load-view');
-
-//     Route::get('/student', fn() => view('StudentLayout'))->name('student');
-
-//     Route::get('/studentsubjects/{studentId}', [SubjectController::class, 'getSubjectsByStudent'])->name('subjectByStudent');
-
-//     Route::get('/marks/courses/{studentId}', [MarkController::class, 'getMarksWithCourses'])->name('MarksWithCourses');
-
-// });
+    Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
+});

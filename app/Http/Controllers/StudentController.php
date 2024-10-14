@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
@@ -50,6 +51,8 @@ class StudentController extends Controller
             'active' => 0
         ]);
 
+
+
         return response()->json('', 201); // Created
     }
 
@@ -59,6 +62,22 @@ class StudentController extends Controller
         $name = request()->name;
 
         $email = request()->email;
+
+        $validator = Validator::make(request()->all(), [
+            'name' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($studentId),
+            ],
+        ]);
+
+        // Handle validation errors
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+            ], 400); // Bad Request
+        }
 
         $student = User::findOrFail($studentId);
 

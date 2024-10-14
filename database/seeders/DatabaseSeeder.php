@@ -15,7 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        SubjectStudents::factory(10)->create();
+        // SubjectStudents::factory(10)->create();
+
+        $this->call(LaratrustSeeder::class);
 
         // User::factory()->create([
         //     'name' => 'Test User',

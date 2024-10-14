@@ -41,7 +41,7 @@
 
         // Getting Students From Database
         $.ajax({
-            url: "{{ route('admin.students.show','') }}/" + currentUser.id,
+            url: "{{ route('students.show','') }}/" + currentUser.id,
             type: 'GET',
         }).then(function(res) {
             // Clear Loading Message
@@ -82,7 +82,7 @@
             let studentId = $(this).data('id');
 
             $.ajax({
-                url: "{{ route('admin.students.show', '') }}/" + studentId,
+                url: "{{ route('students.show', '') }}/" + studentId,
                 type: 'GET'
 
             }).then(function(res) {
@@ -134,7 +134,7 @@
 
             // Send the updated data to the server
             $.ajax({
-                url: "{{ route('admin.students.update', '') }}/" + studentId,
+                url: "{{ route('students.update', '') }}/" + studentId,
                 type: 'PUT',
                 data: formData,
                 headers: {

@@ -69,7 +69,7 @@
 
             // Fetch all students and populate the dropdown
             $.ajax({
-                url: "{{ route('students.index') }}",
+                url: "{{ route('admin.students.index') }}",
                 type: 'GET'
 
             }).then(function (res) {
@@ -92,7 +92,7 @@
 
             if (studentId) {
                 $.ajax({
-                    url: `{{route('subjectByStudent','')}}/` + studentId, // Adjust route as needed
+                    url: `{{route('admin.subjectByStudent','')}}/` + studentId, // Adjust route as needed
                     type: 'GET'
 
                 }).then(function (res) {
@@ -138,7 +138,7 @@
             let mark = $('#markInput').val();
 
             $.ajax({
-                url: "{{ route('marks.store') }}", // Adjust route accordingly
+                url: "{{ route('admin.marks.store') }}", // Adjust route accordingly
                 type: 'POST',
                 data: {
                     student_id: studentId,
@@ -161,11 +161,6 @@
 
             });
         });
-
-
-
-
-
 
     });
 

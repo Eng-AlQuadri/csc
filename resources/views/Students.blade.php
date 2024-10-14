@@ -51,7 +51,7 @@
 
             // Getting Students From Database
             $.ajax({
-                url: "{{ route('students.index') }}",
+                url: "{{ route('admin.students.index') }}",
                 type: 'GET',
             }).then(function(res) {
                 // Clear Loading Message
@@ -86,7 +86,7 @@
             // Confirm deletion
             if (confirm('Are You Sure You Want To Delete This Studnet?')) {
                 $.ajax({
-                    url: "{{route('students.destroy', '')}}/" + studentId, // Adjust the URL according to your route
+                    url: "{{route('admin.students.destroy', '')}}/" + studentId, // Adjust the URL according to your route
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token here
@@ -128,7 +128,7 @@
             let studentId = $(this).data('id');
 
             $.ajax({
-                url: "{{ route('students.show', '') }}/" + studentId,
+                url: "{{ route('admin.students.show', '') }}/" + studentId,
                 type: 'GET'
 
             }).then(function(res) {
@@ -140,6 +140,9 @@
                         <div class="head">
                             <h3>Edit Student</h3>
                             <span id='close-edit-user'>x</span>
+                        </div>
+                        <div class="serrors">
+                            <!-- <h3>Error</h3> -->
                         </div>
                         <div class="form">
                             <form action="" id='sumbitEditForm'>
@@ -164,7 +167,7 @@
 
             }).fail(function(res) {
 
-                $('.notification').html(`<h3>Failed to load student data</h3>`);
+
             });
         });
 
@@ -176,7 +179,7 @@
             let studentId = $(this).data('id');
 
             $.ajax({
-                url: "{{ route('students.activate', '') }}/" + studentId,
+                url: "{{ route('admin.students.activate', '') }}/" + studentId,
                 type: 'put',
                 data: studentId,
                 headers: {
@@ -209,7 +212,7 @@
 
             // Send the updated data to the server
             $.ajax({
-                url: "{{ route('students.update', '') }}/" + studentId, // Adjust this to match your update route
+                url: "{{ route('admin.students.update', '') }}/" + studentId, // Adjust this to match your update route
                 type: 'PUT',
                 data: formData,
                 headers: {
@@ -224,7 +227,15 @@
                 getStudents(); // Refresh the list of students
 
             }).fail(function(res) {
-                $('.notification').html(`<h3>Failed to update student</h3>`);
+
+                let errorDiv = $('.serrors');
+
+                let data = res.responseJSON;
+
+                if (data.error) {
+                    errorDiv.addClass('show').html(`<h3>${data.error}</h3>`);
+                    return;
+                }
             });
         })
 
@@ -286,7 +297,7 @@
 
             // Send the updated data to the server
             $.ajax({
-                url: "{{ route('students.store') }}",
+                url: "{{ route('admin.students.store') }}",
                 type: 'POST',
                 data: formData,
                 headers: {

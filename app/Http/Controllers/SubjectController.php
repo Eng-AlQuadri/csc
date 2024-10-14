@@ -89,7 +89,7 @@ class SubjectController extends Controller
 
     public function getSubjectsByStudent($id)
     {
-        $subjects = SubjectStudents::where('student_id', $id)->get(); // Assuming relation is defined
+        $subjects = SubjectStudents::where('student_id', $id)->get();
 
         $subjects->load('subject');
 

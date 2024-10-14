@@ -12,6 +12,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
 
+
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -50,13 +51,14 @@ class AuthController extends Controller
             // Authentication passed
             $user = Auth::user();
 
-            $token = $user->createToken('testA')->plainTextToken;
+            $token = $user->createToken('csc')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login successful',
                 'token' => $token,
                 'user' => $user
             ], 200); // OK
+
         }
 
 
@@ -94,5 +96,13 @@ class AuthController extends Controller
         return response()->json([
             'error' => 'Signup successful, Please Wait For The Administrator To Activate Your Account',
         ], 201); // Created
+    }
+
+    public function logout()
+    {
+
+        Auth::logout();
+
+        return response()->json('', 204);
     }
 }
