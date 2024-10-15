@@ -10,6 +10,8 @@
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Admin</title>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+
 </head>
 <body>
     <div class="defaultLayout">
@@ -20,9 +22,9 @@
                 </span>
                 <span class="settingsHolder">
                     <h4>Adminstrator</h4>
-                    {{-- <div class="logoutIcon" data-view = 'AdminMessage'>
+                    <div class="logoutIcon" data-view = 'AdminMessage'>
                         <i class="fa-regular fa-comments"></i>
-                    </div> --}}
+                    </div>
                 </span>
             </div>
         </div>
@@ -92,7 +94,7 @@
                         url: "{{ route('logout') }}",
                         type: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Laravel's CSRF token for security
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
                     }).then(function(res) {
 

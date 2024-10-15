@@ -23,7 +23,8 @@ class StoreMessageRequest extends FormRequest
     {
         return [
             'sender_id' => 'required',
-            'reciever_id' => 'required',
+            'reciever_id' => 'integer',
+            'group_id' => 'integer',
             'content' => 'required|string',
             'status' => 'required|string'
         ];

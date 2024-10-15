@@ -50,4 +50,14 @@ class User extends Authenticatable implements LaratrustUser
             'password' => 'hashed',
         ];
     }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_students', 'student_id', 'subject_id');
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_students');
+    }
 }

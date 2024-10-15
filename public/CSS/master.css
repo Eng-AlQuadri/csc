@@ -1240,5 +1240,36 @@ button:active {
 /* End Messages */
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    top: 50px;
+    height: 150px;
+    overflow: auto;
+}
+
+.dropdown-content label {
+    display: flex;
+    margin-top: 10px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+#specialInput {
+    width: auto;
 }

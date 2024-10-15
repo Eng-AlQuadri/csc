@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class Group extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function students()
+    public function users()
     {
-        return $this->belongsToMany(User::class, 'subject_students', 'subject_id', 'user_id');
+        return $this->belongsToMany(User::class, 'group_students', 'group_id', 'student_id');
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Route;
-
-
+use Symfony\Component\Mime\MessageConverter;
 
 // Public Routes
 Route::get('/', fn() => view('loginRegester'));  // Login & Register Screen
@@ -58,6 +58,18 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
 
     // Message Controller
     Route::get('/admin/messages/{id}', [MessageController::class, 'index'])->name('admin.message.index');
+
+    Route::post('/admin/messages', [MessageController::class, 'store'])->name('admin.message.store');
+
+    Route::get('/admin/group/{id}', [GroupController::class, 'getGroupByUserId'])->name('admin.getGroups');
+
+    Route::get('/admin/group/messages/{id}', [MessageController::class, 'getGroupMessages'])->name('admin.message.group');
+
+    Route::post('/admin/messages', [MessageController::class, 'store'])->name('admin.message.store');
+
+    Route::post('/admin/groups', [GroupController::class, 'store'])->name('admin.groups.store');
+
+    Route::get('/admin/group/name/{id}', [GroupController::class, 'getGroupName'])->name('admin.group.name');
 });
 
 
@@ -79,4 +91,21 @@ Route::group(['prefix' => 'student', 'middleware' => 'student'], function () {
     Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
 
     Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
+
+    // Shared Users (Course)
+    Route::get('/student/shared-users', [MessageController::class, 'getUsersWithSharedSubjects'])->name('student.shared.users');
+
+    // Message Controller
+    Route::get('/student/messages/{id}', [MessageController::class, 'index'])->name('student.message.index');
+
+    Route::get('/student/group/messages/{id}', [MessageController::class, 'getGroupMessages'])->name('student.message.group');
+
+    Route::post('/student/messages', [MessageController::class, 'store'])->name('student.message.store');
+
+    // Group Controller
+    Route::post('/student/groups', [GroupController::class, 'store'])->name('student.groups.store');
+
+    Route::get('/student/group/{id}', [GroupController::class, 'getGroupByUserId'])->name('student.getGroups');
+
+    Route::get('/student/group/name/{id}', [GroupController::class, 'getGroupName'])->name('students.group.name');
 });

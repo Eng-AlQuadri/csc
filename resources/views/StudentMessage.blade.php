@@ -8,6 +8,7 @@
                 New Group
             </button>
         </div>
+
         <ul class="names">
 
         </ul>
@@ -56,10 +57,9 @@
 </div>
 
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
-
 <script src="https://js.pusher.com/7.2/pusher.min.js" defer></script>
-
 <script>
 
     $(function() {
@@ -83,8 +83,6 @@
 
         let currentGroup;
 
-        let currentUser = JSON.parse(window.localStorage.getItem('user'));
-
         getUsers();
 
         // Get Users
@@ -92,15 +90,34 @@
 
             const contactsList = $('.names');
 
+            currentUser = JSON.parse(window.localStorage.getItem('user'));
+
             // Getting Students From Database
             $.ajax({
 
-                url: "{{ route('admin.students.index') }}",
+                url: "{{ route('student.shared.users') }}",
                 type: 'GET'
 
             }).then(function(contacts) {
 
                 contacts.forEach(contact => {
+
+                    if(contact.role === 'admin') {
+                        const contactItem = $(`
+                            <li data-id=${contact.id} data-name=${contact.name} id='contact'>
+                                <div class="field">
+                                    <div class="icon">
+                                        <img src="{{ url('images/pic.jpg') }}" alt="img">
+                                    </div>
+                                    <div class="texts">
+                                        <p class="chat-name">${contact.name}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        `);
+
+                        contactsList.append(contactItem);
+                    }
 
                     const contactItem = $(`
                         <li data-id=${contact.id} data-name=${contact.name} id='contact'>
@@ -109,7 +126,8 @@
                                     <img src="{{ url('images/pic.jpg') }}" alt="img">
                                 </div>
                                 <div class="texts">
-                                    <p class="chat-name">${contact.name} (${contact.role})</p>
+                                    <p class="chat-name">${contact.name}</p>
+                                    <p class='status'>Subjects: ${contact.subjects.map(s => s.name).join(' | ')}</p>
                                 </div>
                             </div>
                         </li>
@@ -125,7 +143,7 @@
             // Getting groups from database
             $.ajax({
 
-                url: "{{ route('admin.getGroups', '')}}/" + currentUser.id,
+                url: "{{ route('student.getGroups', '')}}/" + currentUser.id,
                 type: 'GET'
 
             }).then(function(contacts) {
@@ -185,7 +203,7 @@
 
                 // Chat Name On Header
                 $.ajax({
-                    url: "{{ route('admin.students.show', '') }}/" + currentContact,
+                    url: "{{ route('students.show', '') }}/" + currentContact,
                     type: 'GET'
 
                 }).then(function(res) {
@@ -193,11 +211,10 @@
                     headName.html(res.name);
                 })
 
-
                 // Get Messages
                 $.ajax({
 
-                    url: "{{ route('admin.message.index', '') }}/" + currentContact,
+                    url: "{{ route('student.message.index', '') }}/" + currentContact,
                     type: 'GET'
 
                 }).then(function(messages) {
@@ -229,11 +246,11 @@
                     })
                 })
 
-            } else if (currentGroup) { // Getting Group Messages
+            } else if(currentGroup) { //Getting Messages For Group
 
                 // Chat Name On Header
                 $.ajax({
-                    url: "{{ route('admin.group.name', '') }}/" + currentGroup,
+                    url: "{{ route('students.group.name', '') }}/" + currentGroup,
                     type: 'GET'
 
                 }).then(function(res) {
@@ -244,7 +261,7 @@
                 // Get Messages
                 $.ajax({
 
-                    url: "{{ route('admin.message.group', '') }}/" + currentGroup,
+                    url: "{{ route('student.message.group', '') }}/" + currentGroup,
                     type: 'GET'
 
                 }).then(function(messages) {
@@ -278,14 +295,16 @@
             }
 
 
+
         })
 
         // Send Message Functionality
         $(document).on('click', '#sendMessageButton', function (e) {
 
-            e.preventDefault();
+            // sending messages for persons
+            if(currentContact) {
 
-            if(currentContact) { // Sending Messages For Persons
+                e.preventDefault();
 
                 const sender_id = JSON.parse(window.localStorage.getItem('user'));
 
@@ -295,7 +314,7 @@
                     return;
 
                 $.ajax({
-                    url: "{{ route('admin.message.store') }}",
+                    url: "{{ route('student.message.store') }}",
                     type: 'POST',
                     data: {
                         sender_id: sender_id.id,
@@ -304,7 +323,7 @@
                         status: 'sent'
                     },
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     }
 
                 }).then(function() {
@@ -316,10 +335,11 @@
                     `);
                     $('#messageHolder').append(newMessage);
                     $('#sendMessage').val(''); // Clear input
-
                 })
 
-            } else if (currentGroup) { // Sending Messages For Groups
+            } else if (currentGroup) { // Sending Messages To Group
+
+                e.preventDefault();
 
                 const sender_id = JSON.parse(window.localStorage.getItem('user'));
 
@@ -329,7 +349,7 @@
                     return;
 
                 $.ajax({
-                    url: "{{ route('admin.message.store') }}",
+                    url: "{{ route('student.message.store') }}",
                     type: 'POST',
                     data: {
                         sender_id: sender_id.id,
@@ -372,7 +392,7 @@
 
             $.ajax({
 
-                url: "{{ route('admin.students.index') }}",
+                url: "{{ route('student.shared.users') }}",
                 type: 'GET'
 
             }).then(function(res){
@@ -425,7 +445,7 @@
                 })
 
             }).fail(function(res) {
-                alert('Failed to load students');
+                alert('Failed to load students or subjects');
             })
         });
 
@@ -441,7 +461,9 @@
                 selectedStudents.push($(this).val());
             });
 
-            selectedStudents.push(currentUser.id); // Current User (admin)
+            selectedStudents.push(1);  // admin
+
+            selectedStudents.push(currentUser.id); // Current User
 
             let groupName = $('#groupName').val();
 
@@ -453,7 +475,7 @@
 
             $.ajax({
 
-                url: "{{ route('admin.groups.store') }}",
+                url: "{{ route('student.groups.store') }}",
                 type: 'POST',
                 data: data,
                 headers: {

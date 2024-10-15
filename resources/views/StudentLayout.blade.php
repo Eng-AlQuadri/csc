@@ -20,8 +20,8 @@
                 </span>
                 <span class="settingsHolder">
                     <h4>Student</h4>
-                    <div class="logoutIcon">
-                        {{-- <i class="fa-solid fa-right-from-bracket"> --}}
+                    <div class="logoutIcon" data-view = 'StudentMessage'>
+                        <i class="fa-regular fa-comments"></i>
                     </div>
                 </span>
             </div>
@@ -53,6 +53,8 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 
     <script>
         $(function(){
@@ -97,6 +99,21 @@
                     })
 
                 }
+
+                $.ajax({
+                    url: "{{ route('student.load-view', '') }}/" + viewName,
+                    type: 'GET'
+
+                }).then(function(res) {
+
+                    $('.pageContent').html(res);
+                })
+            })
+
+            // Open Chat
+            $('.logoutIcon').on('click', function(){
+
+                let viewName = $(this).data('view');
 
                 $.ajax({
                     url: "{{ route('student.load-view', '') }}/" + viewName,
